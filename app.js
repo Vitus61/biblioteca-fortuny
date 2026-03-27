@@ -164,6 +164,7 @@ function apriLibro(libro) {
 
   const frame = document.getElementById("bibi-frame");
   frame.src = "bibi/index.html?book=../" + libro.file;
+  document.getElementById("istituto-label").style.display = "block";
 }
 
 // ===== EVENT LISTENERS =====
@@ -192,6 +193,7 @@ function initEvents() {
   // Lettore — indietro
   $("#reader-back").addEventListener("click", () => {
     document.getElementById("bibi-frame").src = "";
+    document.getElementById("istituto-label").style.display = "none";
     checkRiprendiLettura();
     navigateTo("home");
   });

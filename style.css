@@ -327,6 +327,23 @@ body {
   min-height: calc(100vh - 60px) !important;
 }
 
+/* ===== ETICHETTA ISTITUTO ===== */
+#istituto-label {
+  position: fixed;
+  bottom: 8px;
+  right: 12px;
+  font-size: 22px;
+  font-family: Georgia, serif;
+  opacity: 0.5;
+  z-index: 9999;
+  display: none;
+  pointer-events: none;
+}
+
+[data-theme="dark"] #istituto-label {
+  color: #ffffff;
+}
+
 /* ===== LOADING SPINNER ===== */
 .spinner {
   display: inline-block;
