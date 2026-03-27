@@ -6,7 +6,7 @@
       "autore": "Luigi Pirandello",
       "genere": "Teatro",
       "anno": 1921,
-      "file": "epub/18457.epub.images"
+      "file": "epub/pg18457-images.epub"
     },
     {
       "id": 2,
@@ -14,7 +14,7 @@
       "autore": "Luigi Pirandello",
       "genere": "Teatro",
       "anno": 1922,
-      "file": "epub/18456.epub.images"
+      "file": "epub/pg18456-images.epub"
     },
     {
       "id": 3,
@@ -22,7 +22,7 @@
       "autore": "Luigi Pirandello",
       "genere": "Saggistica",
       "anno": 1908,
-      "file": "epub/56958.epub.images"
+      "file": "epub/pg56958-images.epub"
     },
     {
       "id": 4,
@@ -30,7 +30,7 @@
       "autore": "Alessandro Manzoni",
       "genere": "Narrativa",
       "anno": 1827,
-      "file": "epub/25962.epub.images"
+      "file": "epub/pg25962-images.epub"
     },
     {
       "id": 5,
@@ -38,7 +38,7 @@
       "autore": "Dante Alighieri",
       "genere": "Poesia",
       "anno": 1320,
-      "file": "epub/1012.epub.images"
+      "file": "epub/pg1012-images.epub"
     },
     {
       "id": 6,
@@ -46,7 +46,7 @@
       "autore": "Carlo Collodi",
       "genere": "Narrativa",
       "anno": 1883,
-      "file": "epub/14591.epub.images"
+      "file": "epub/pg14591-images.epub"
     }
   ]
 }
