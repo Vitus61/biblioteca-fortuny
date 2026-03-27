@@ -47,6 +47,126 @@
       "genere": "Narrativa",
       "anno": 1883,
       "file": "epub/pg14591-images.epub"
+    },
+    {
+      "id": 7,
+      "titolo": "Le rive della Bormida nel 1794",
+      "autore": "Giuseppe Cesare Abba",
+      "genere": "Narrativa",
+      "anno": 1897,
+      "file": "epub/pg21425.epub"
+    },
+    {
+      "id": 8,
+      "titolo": "Agide",
+      "autore": "Vittorio Alfieri",
+      "genere": "Teatro",
+      "anno": 1789,
+      "file": "epub/pg31079-images.epub"
+    },
+    {
+      "id": 9,
+      "titolo": "Sofonisba",
+      "autore": "Vittorio Alfieri",
+      "genere": "Teatro",
+      "anno": 1789,
+      "file": "epub/pg31080-images.epub"
+    },
+    {
+      "id": 10,
+      "titolo": "Ottavia",
+      "autore": "Vittorio Alfieri",
+      "genere": "Teatro",
+      "anno": 1789,
+      "file": "epub/pg38012-images.epub"
+    },
+    {
+      "id": 11,
+      "titolo": "Forse che sì forse che no",
+      "autore": "Gabriele D'Annunzio",
+      "genere": "Narrativa",
+      "anno": 1910,
+      "file": "epub/pg42673-images.epub"
+    },
+    {
+      "id": 12,
+      "titolo": "Il Regno d'Etruria",
+      "autore": "Eugène-Melchior Vogüé",
+      "genere": "Storia",
+      "anno": 1893,
+      "file": "epub/pg43174-images.epub"
+    },
+    {
+      "id": 13,
+      "titolo": "I Viaggi di Marco Polo",
+      "autore": "Marco Polo",
+      "genere": "Narrativa",
+      "anno": 1298,
+      "file": "epub/pg44714-images.epub"
+    },
+    {
+      "id": 14,
+      "titolo": "L'allegoria dell'autunno",
+      "autore": "Gabriele D'Annunzio",
+      "genere": "Poesia",
+      "anno": 1895,
+      "file": "epub/pg52259-images.epub"
+    },
+    {
+      "id": 15,
+      "titolo": "Le Novelle della Pescara",
+      "autore": "Gabriele D'Annunzio",
+      "genere": "Narrativa",
+      "anno": 1902,
+      "file": "epub/pg53184-images.epub"
+    },
+    {
+      "id": 16,
+      "titolo": "Le invasioni barbariche in Italia",
+      "autore": "Pasquale Villari",
+      "genere": "Storia",
+      "anno": 1901,
+      "file": "epub/pg55545-images.epub"
+    },
+    {
+      "id": 17,
+      "titolo": "Il fantasma di Canterville",
+      "autore": "Oscar Wilde",
+      "genere": "Narrativa",
+      "anno": 1887,
+      "file": "epub/pg60586-images.epub"
+    },
+    {
+      "id": 18,
+      "titolo": "Contemplazione della morte",
+      "autore": "Gabriele D'Annunzio",
+      "genere": "Saggistica",
+      "anno": 1912,
+      "file": "epub/pg62417-images.epub"
+    },
+    {
+      "id": 19,
+      "titolo": "Il giro del mondo in ottanta giorni",
+      "autore": "Jules Verne",
+      "genere": "Narrativa",
+      "anno": 1872,
+      "file": "epub/pg65736-images.epub"
+    },
+    {
+      "id": 20,
+      "titolo": "Amleto",
+      "autore": "William Shakespeare",
+      "genere": "Teatro",
+      "anno": 1601,
+      "file": "epub/shakespeare_amleto.epub"
+    },
+    {
+      "id": 21,
+      "titolo": "Anna Karenina",
+      "autore": "Lev Tolstoj",
+      "genere": "Narrativa",
+      "anno": 1878,
+      "file": "epub/tolstoj_anna_karenina.epub"
     }
   ]
 }
