@@ -62,7 +62,8 @@ function updateClock() {
   const now = new Date();
   const ore = now.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
   const data = now.toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  $("#clock").textContent = `${ore}  —  ${data.charAt(0).toUpperCase() + data.slice(1)}`;
+  document.getElementById("clock-time").textContent = ore;
+  document.getElementById("clock-date").textContent = data.charAt(0).toUpperCase() + data.slice(1);
 }
 
 // ===== 2. HOME — RIPRENDI LETTURA =====
