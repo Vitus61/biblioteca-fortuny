@@ -310,13 +310,6 @@ body {
   min-height: calc(100vh - 60px) !important;
 }
 
-/* ===== FULLSCREEN ===== */
-:fullscreen #epub-viewer,
-:-webkit-full-screen #epub-viewer {
-  height: 100vh !important;
-  width: 100vw !important;
-}
-
 /* ===== LOADING SPINNER ===== */
 .spinner {
   display: inline-block;

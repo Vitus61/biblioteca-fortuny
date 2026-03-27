@@ -312,8 +312,6 @@ async function apriLibro(libro) {
     currentRendition.themes.select(localStorage.getItem("tema") || "light");
 
     renditionDisplay(libro);
-    attivaFullscreen();
-
   } catch (err) {
     console.error("Errore generale:", err);
     viewer.innerHTML = "<p>Errore: " + err.message + "</p>";
@@ -344,26 +342,6 @@ function renditionDisplay(libro) {
 
 }
 
-// ===== FULLSCREEN =====
-function attivaFullscreen() {
-  const el = document.documentElement;
-  if (el.requestFullscreen) {
-    el.requestFullscreen();
-  } else if (el.webkitRequestFullscreen) {
-    el.webkitRequestFullscreen();
-  } else if (el.mozRequestFullScreen) {
-    el.mozRequestFullScreen();
-  }
-}
-
-function disattivaFullscreen() {
-  if (document.exitFullscreen) {
-    document.exitFullscreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
-  }
-}
-
 // ===== EVENT LISTENERS =====
 function initEvents() {
   // Home
@@ -383,7 +361,6 @@ function initEvents() {
 
   // Lettore
   $("#reader-back").addEventListener("click", () => {
-    disattivaFullscreen();
     if (currentBook) {
       currentBook.destroy();
       currentBook = null;
