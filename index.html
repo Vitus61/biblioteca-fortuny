@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#1a1a2e">
   <meta name="description" content="Biblioteca digitale IIS Fortuny-Moretto di Brescia">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;">
   <title>Biblioteca Digitale — IIS Fortuny-Moretto</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
 </head>
 <body>
 
@@ -111,7 +110,7 @@
       <span></span>
     </header>
 
-    <div id="epub-viewer"></div>
+    <iframe id="bibi-frame" src="" style="width:100%; height:calc(100vh - 60px); border:none;"></iframe>
   </section>
 
   <script src="app.js"></script>

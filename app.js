@@ -69,9 +69,9 @@ function updateClock() {
 // ===== 2. HOME — RIPRENDI LETTURA =====
 function checkRiprendiLettura() {
   const libro = localStorage.getItem("ultimoLibro");
-  const pos = localStorage.getItem("ultimaPosizione");
+  const file = localStorage.getItem("ultimoFile");
   const btn = $("#btn-riprendi");
-  if (libro && pos) {
+  if (libro && file) {
     btn.disabled = false;
     btn.title = `Riprendi: ${libro}`;
   } else {
@@ -99,10 +99,6 @@ function toggleTheme() {
     document.documentElement.setAttribute("data-theme", "dark");
     localStorage.setItem("tema", "dark");
     toggleThemeIcons(true);
-  }
-  // Sincronizza tema nell'iframe epub.js
-  if (currentRendition) {
-    currentRendition.themes.select(localStorage.getItem("tema") || "light");
   }
 }
 
@@ -152,28 +148,9 @@ function renderResults(risultati) {
   }
 }
 
-// ===== 5. LETTORE EPUB =====
-let currentBook = null;
-let currentRendition = null;
+// ===== 5. LETTORE BIBI =====
 
-function calcolaFontSize() {
-  const w = window.innerWidth;
-  if (w < 380) return "85%";
-  if (w < 480) return "95%";
-  if (w < 768) return "105%";
-  if (w < 1024) return "110%";
-  return "115%";
-}
-
-function calcolaPadding() {
-  const w = window.innerWidth;
-  if (w < 480) return "10px 15px";
-  if (w < 768) return "15px 25px";
-  return "20px 40px";
-}
-
-async function apriLibro(libro) {
-  // Quando si riprende, libro è ricostruito da localStorage
+function apriLibro(libro) {
   if (typeof libro === "string") {
     const file = localStorage.getItem("ultimoFile");
     if (!file) return;
@@ -181,165 +158,12 @@ async function apriLibro(libro) {
   }
 
   $("#reader-title").textContent = libro.titolo;
-  // Salva subito titolo e file per la ripresa
   localStorage.setItem("ultimoLibro", libro.titolo);
   localStorage.setItem("ultimoFile", libro.file);
   navigateTo("reader");
 
-  const viewer = document.getElementById("epub-viewer");
-  viewer.innerHTML = "<p>Caricamento in corso...</p>";
-
-  if (currentBook) {
-    currentBook.destroy();
-  }
-
-  // Aspetta che la vista sia visibile
-  await new Promise(resolve => setTimeout(resolve, 300));
-
-  viewer.innerHTML = "";
-
-  try {
-    currentBook = ePub(libro.file);
-
-    currentBook.ready.then(() => {
-      console.log("Book ready:", currentBook.packaging.metadata.title);
-    }).catch(err => {
-      console.error("Book ready error:", err);
-      viewer.innerHTML = "<p>Errore book.ready: " + err + "</p>";
-    });
-
-    currentRendition = currentBook.renderTo(viewer, {
-      manager: "continuous",
-      flow: "scrolled-doc",
-      width: "100%",
-      height: "100%"
-    });
-
-    currentRendition.themes.register("light", {
-      body: {
-        background: "#ffffff",
-        color: "#000000",
-        "word-wrap": "break-word",
-        "overflow-wrap": "break-word",
-        "word-break": "normal",
-        "white-space": "normal",
-        "max-width": "100%",
-        "box-sizing": "border-box",
-        padding: calcolaPadding(),
-        margin: "0",
-        "font-size": calcolaFontSize(),
-        "line-height": "1.7",
-        "font-family": "Georgia, serif",
-        "text-align": "justify"
-      },
-      "p, h1, h2, h3, span, div": {
-        color: "#000000 !important",
-        "word-wrap": "break-word",
-        "overflow-wrap": "break-word",
-        "max-width": "100%",
-        "white-space": "normal"
-      },
-      "hr, .chapter-break": {
-        border: "none",
-        "border-top": "1px solid #000000",
-        margin: "40px auto",
-        width: "80%"
-      },
-      "h1, h2": {
-        "border-top": "1px solid #000000",
-        "padding-top": "30px",
-        "margin-top": "40px"
-      },
-      "p": {
-        orphans: "3",
-        widows: "3"
-      }
-    });
-
-    currentRendition.themes.register("dark", {
-      body: {
-        background: "#000000",
-        color: "#ffffff",
-        "word-wrap": "break-word",
-        "overflow-wrap": "break-word",
-        "word-break": "normal",
-        "white-space": "normal",
-        "max-width": "100%",
-        "box-sizing": "border-box",
-        padding: calcolaPadding(),
-        margin: "0",
-        "font-size": calcolaFontSize(),
-        "line-height": "1.7",
-        "font-family": "Georgia, serif",
-        "text-align": "justify"
-      },
-      "p, h1, h2, h3, span, div": {
-        color: "#ffffff !important",
-        background: "#000000 !important",
-        "word-wrap": "break-word",
-        "overflow-wrap": "break-word",
-        "max-width": "100%",
-        "white-space": "normal"
-      },
-      "hr, .chapter-break": {
-        border: "none",
-        "border-top": "1px solid #ffffff",
-        margin: "40px auto",
-        width: "80%"
-      },
-      "h1, h2": {
-        "border-top": "1px solid #ffffff",
-        "padding-top": "30px",
-        "margin-top": "40px"
-      },
-      "p": {
-        orphans: "3",
-        widows: "3"
-      }
-    });
-
-    currentRendition.themes.select(localStorage.getItem("tema") || "light");
-
-    renditionDisplay(libro);
-  } catch (err) {
-    console.error("Errore generale:", err);
-    viewer.innerHTML = "<p>Errore: " + err.message + "</p>";
-  }
-}
-
-function renditionDisplay(libro) {
-  // Se stiamo riprendendo questo libro, vai alla posizione salvata
-  const savedBook = localStorage.getItem("ultimoLibro");
-  const savedPos = localStorage.getItem("ultimaPosizione");
-  const cfi = (savedBook === libro.titolo && savedPos) ? savedPos : undefined;
-
-  currentRendition.display(cfi).then(() => {
-    console.log("Displayed successfully");
-  }).catch(err => {
-    console.error("Display error:", err);
-    document.getElementById("epub-viewer").innerHTML = "<p>Errore display: " + err + "</p>";
-  });
-
-  // Navigazione a tap dentro l'iframe epub
-  const epubViewer = document.getElementById("epub-viewer");
-  currentRendition.on("click", (e) => {
-    const w = window.innerWidth;
-    if (e.clientX > w / 2) {
-      epubViewer.scrollBy({ top: epubViewer.clientHeight * 0.9, behavior: "smooth" });
-    } else {
-      epubViewer.scrollBy({ top: -epubViewer.clientHeight * 0.9, behavior: "smooth" });
-    }
-  });
-
-  // Salva posizione ad ogni cambio pagina
-  currentRendition.on("relocated", (location) => {
-    if (location && location.start && location.start.cfi) {
-      localStorage.setItem("ultimaPosizione", location.start.cfi);
-      localStorage.setItem("ultimoLibro", libro.titolo);
-      localStorage.setItem("ultimoFile", libro.file);
-    }
-  });
-
+  const frame = document.getElementById("bibi-frame");
+  frame.src = "bibi/index.html?book=../" + libro.file;
 }
 
 // ===== EVENT LISTENERS =====
@@ -350,47 +174,26 @@ function initEvents() {
   $("#btn-riprendi").addEventListener("click", () => {
     const titolo = localStorage.getItem("ultimoLibro");
     if (!titolo) return;
-    // Cerca nel catalogo per titolo, fallback su localStorage
     const libro = catalogo.find(l => l.titolo === titolo);
     if (libro) {
       apriLibro(libro);
     } else {
       const file = localStorage.getItem("ultimoFile");
-      if (file) {
-        apriLibro({ titolo: titolo, file: file });
-      } else {
-        navigateTo("search");
-      }
+      if (file) apriLibro({ titolo: titolo, file: file });
     }
   });
 
   // Ricerca
   $("#search-back").addEventListener("click", () => navigateTo("home"));
   $("#btn-cerca").addEventListener("click", cercaLibri);
-  // Enter per cercare
   $("#search-titolo").addEventListener("keydown", (e) => { if (e.key === "Enter") cercaLibri(); });
   $("#search-autore").addEventListener("keydown", (e) => { if (e.key === "Enter") cercaLibri(); });
 
-  // Lettore
+  // Lettore — indietro
   $("#reader-back").addEventListener("click", () => {
-    if (currentBook) {
-      currentBook.destroy();
-      currentBook = null;
-      currentRendition = null;
-    }
-    navigateTo("search");
-  });
-
-  // Navigazione da tastiera nel lettore
-  document.addEventListener("keyup", (e) => {
-    if (!views.reader.classList.contains("active")) return;
-    const v = document.getElementById("epub-viewer");
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      v.scrollBy({ top: v.clientHeight * 0.9, behavior: "smooth" });
-    }
-    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      v.scrollBy({ top: -v.clientHeight * 0.9, behavior: "smooth" });
-    }
+    document.getElementById("bibi-frame").src = "";
+    checkRiprendiLettura();
+    navigateTo("home");
   });
 }
 
@@ -403,16 +206,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   checkRiprendiLettura();
   updateClock();
   setInterval(updateClock, 1000);
-
-  // Ricalcola font e padding al cambio orientamento
-  window.addEventListener("orientationchange", () => {
-    setTimeout(() => {
-      if (currentRendition) {
-        const viewer = document.getElementById("epub-viewer");
-        currentRendition.themes.override("font-size", calcolaFontSize());
-        currentRendition.themes.override("padding", calcolaPadding());
-        currentRendition.resize(viewer.clientWidth, viewer.clientHeight);
-      }
-    }, 300);
-  });
 });
