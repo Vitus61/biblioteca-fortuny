@@ -1,0 +1,52 @@
+{
+  "libri": [
+    {
+      "id": 1,
+      "titolo": "Sei personaggi in cerca d'autore",
+      "autore": "Luigi Pirandello",
+      "genere": "Teatro",
+      "anno": 1921,
+      "file": "epub/18457.epub.images"
+    },
+    {
+      "id": 2,
+      "titolo": "Enrico IV",
+      "autore": "Luigi Pirandello",
+      "genere": "Teatro",
+      "anno": 1922,
+      "file": "epub/18456.epub.images"
+    },
+    {
+      "id": 3,
+      "titolo": "L'umorismo",
+      "autore": "Luigi Pirandello",
+      "genere": "Saggistica",
+      "anno": 1908,
+      "file": "epub/56958.epub.images"
+    },
+    {
+      "id": 4,
+      "titolo": "I promessi sposi",
+      "autore": "Alessandro Manzoni",
+      "genere": "Narrativa",
+      "anno": 1827,
+      "file": "epub/25962.epub.images"
+    },
+    {
+      "id": 5,
+      "titolo": "Divina Commedia",
+      "autore": "Dante Alighieri",
+      "genere": "Poesia",
+      "anno": 1320,
+      "file": "epub/1012.epub.images"
+    },
+    {
+      "id": 6,
+      "titolo": "Le avventure di Pinocchio",
+      "autore": "Carlo Collodi",
+      "genere": "Narrativa",
+      "anno": 1883,
+      "file": "epub/14591.epub.images"
+    }
+  ]
+}

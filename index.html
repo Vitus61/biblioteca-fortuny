@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="description" content="Biblioteca digitale IIS Fortuny-Moretto di Brescia">
+  <title>Biblioteca Digitale — IIS Fortuny-Moretto</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+</head>
+<body>
+
+  <!-- ========== 1. SPLASH PAGE ========== -->
+  <section id="splash" class="view active">
+    <div class="splash-content">
+      <h1 class="splash-title">IIS Fortuny-Moretto</h1>
+      <p class="splash-subtitle">Biblioteca digitale</p>
+    </div>
+  </section>
+
+  <!-- ========== 2. HOME PAGE ========== -->
+  <section id="home" class="view">
+    <header class="topbar">
+      <span></span>
+      <button id="theme-toggle" class="icon-btn" aria-label="Cambia tema">
+        <svg id="icon-sun" class="theme-icon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="icon-moon" class="theme-icon hidden" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="home-center">
+      <button id="btn-riprendi" class="home-btn" disabled>
+        <svg viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 8 L10 56 L48 56 L48 8 Z"/>
+          <path d="M18 8 L18 56"/>
+          <line x1="38" y1="8" x2="38" y2="28"/>
+          <polygon points="38,28 44,22 38,16" fill="currentColor" stroke="none"/>
+        </svg>
+        <span>Riprendi lettura</span>
+      </button>
+
+      <button id="btn-nuovo" class="home-btn">
+        <svg viewBox="0 0 64 64" width="48" height="48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 8 L10 56 L48 56 L48 8 Z"/>
+          <path d="M18 8 L18 56"/>
+        </svg>
+        <span>Nuovo libro</span>
+      </button>
+    </div>
+
+    <div class="clock" id="clock"></div>
+  </section>
+
+  <!-- ========== 3. PAGINA DI RICERCA ========== -->
+  <section id="search" class="view">
+    <header class="topbar">
+      <button id="search-back" class="icon-btn" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h2 class="topbar-title">Cerca un libro</h2>
+      <span></span>
+    </header>
+
+    <div class="search-form">
+      <label for="search-genere">Genere</label>
+      <select id="search-genere">
+        <option value="">— Tutti —</option>
+      </select>
+
+      <label for="search-autore">Autore</label>
+      <input type="text" id="search-autore" placeholder="es. Luigi Pirandello">
+
+      <label for="search-titolo">Titolo</label>
+      <input type="text" id="search-titolo" placeholder="es. Il fu Mattia Pascal">
+
+      <button id="btn-cerca" class="primary-btn">Cerca</button>
+    </div>
+
+    <div id="search-results" class="results-list"></div>
+  </section>
+
+  <!-- ========== 4. VISTA LETTORE ========== -->
+  <section id="reader" class="view">
+    <header class="topbar">
+      <button id="reader-back" class="icon-btn" aria-label="Indietro">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <h2 class="topbar-title" id="reader-title">Lettore</h2>
+      <button id="reader-mode-toggle" class="icon-btn" aria-label="Cambia modalità lettura">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="18" rx="1"/>
+          <rect x="14" y="3" width="7" height="18" rx="1"/>
+        </svg>
+      </button>
+    </header>
+
+    <div id="epub-viewer"></div>
+
+    <div class="reader-nav">
+      <button id="prev-page" class="icon-btn" aria-label="Pagina precedente">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button id="next-page" class="icon-btn" aria-label="Pagina successiva">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
