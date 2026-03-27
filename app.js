@@ -14,16 +14,15 @@ async function caricaCatalogo() {
 }
 
 function popolaGeneri() {
-  const select = $("#search-genere");
+  const select = document.getElementById("search-genere");
+  select.innerHTML = '<option value="">— Tutti —</option>';
   const generi = [...new Set(catalogo.map(l => l.genere))].sort();
-  // Rimuove le option esistenti tranne la prima ("— Tutti —")
-  while (select.options.length > 1) select.remove(1);
-  for (const g of generi) {
+  generi.forEach(genere => {
     const opt = document.createElement("option");
-    opt.value = g;
-    opt.textContent = g;
+    opt.value = genere;
+    opt.textContent = genere;
     select.appendChild(opt);
-  }
+  });
 }
 
 // ===== ELEMENTI DOM =====
