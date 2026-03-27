@@ -292,17 +292,39 @@ body {
 
 #epub-viewer {
   width: 100%;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 60px);
   overflow: hidden;
 }
 
-.reader-nav {
+.nav-btn {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.15);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 28px;
+  cursor: pointer;
+  z-index: 100;
   display: flex;
-  justify-content: space-between;
-  padding: 0.5rem 1.5rem;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.nav-left { left: 8px; }
+.nav-right { right: 8px; }
+
+[data-theme="dark"] .nav-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
 }
 
 /* ===== LOADING SPINNER ===== */

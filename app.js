@@ -100,6 +100,10 @@ function toggleTheme() {
     localStorage.setItem("tema", "dark");
     toggleThemeIcons(true);
   }
+  // Sincronizza tema nell'iframe epub.js
+  if (currentRendition) {
+    currentRendition.themes.select(localStorage.getItem("tema") || "light");
+  }
 }
 
 function toggleThemeIcons(dark) {
@@ -176,6 +180,9 @@ async function apriLibro(libro) {
 
   viewer.innerHTML = "";
 
+  const altezzaDisponibile = window.innerHeight - 120;
+  const larghezzaDisponibile = viewer.clientWidth;
+
   try {
     currentBook = ePub(libro.file);
 
@@ -187,10 +194,89 @@ async function apriLibro(libro) {
     });
 
     currentRendition = currentBook.renderTo(viewer, {
-      width: viewer.clientWidth,
-      height: viewer.clientHeight,
-      spread: "none"
+      flow: "paginated",
+      spread: "none",
+      minSpreadWidth: 9999
     });
+
+    currentRendition.themes.register("light", {
+      body: {
+        background: "#ffffff",
+        color: "#000000",
+        margin: "0 auto",
+        "max-width": "700px",
+        padding: "20px 40px",
+        "font-size": "1.1em",
+        "line-height": "1.8",
+        "font-family": "Georgia, serif",
+        "text-align": "justify"
+      },
+      "p, h1, h2, h3, span, div": {
+        color: "#000000 !important"
+      },
+      "hr, .chapter-break": {
+        border: "none",
+        "border-top": "1px solid #000000",
+        margin: "40px auto",
+        width: "80%"
+      },
+      "h1, h2": {
+        "border-top": "1px solid #000000",
+        "padding-top": "30px",
+        "margin-top": "40px"
+      },
+      "p, div, li": {
+        "page-break-inside": "avoid"
+      },
+      "h1, h2, h3, h4": {
+        "page-break-after": "avoid",
+        "page-break-before": "always"
+      },
+      "table, figure, img": {
+        "page-break-inside": "avoid"
+      }
+    });
+
+    currentRendition.themes.register("dark", {
+      body: {
+        background: "#000000",
+        color: "#ffffff",
+        margin: "0 auto",
+        "max-width": "700px",
+        padding: "20px 40px",
+        "font-size": "1.1em",
+        "line-height": "1.8",
+        "font-family": "Georgia, serif",
+        "text-align": "justify"
+      },
+      "p, h1, h2, h3, span, div": {
+        color: "#ffffff !important",
+        background: "#000000 !important"
+      },
+      "hr, .chapter-break": {
+        border: "none",
+        "border-top": "1px solid #ffffff",
+        margin: "40px auto",
+        width: "80%"
+      },
+      "h1, h2": {
+        "border-top": "1px solid #ffffff",
+        "padding-top": "30px",
+        "margin-top": "40px"
+      },
+      "p, div, li": {
+        "page-break-inside": "avoid"
+      },
+      "h1, h2, h3, h4": {
+        "page-break-after": "avoid",
+        "page-break-before": "always"
+      },
+      "table, figure, img": {
+        "page-break-inside": "avoid"
+      }
+    });
+
+    currentRendition.themes.select(localStorage.getItem("tema") || "light");
 
     renditionDisplay(libro);
 
@@ -222,17 +308,6 @@ function renditionDisplay(libro) {
     }
   });
 
-  applyReaderTheme();
-}
-
-function applyReaderTheme() {
-  if (!currentRendition) return;
-  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-  if (isDark) {
-    currentRendition.themes.default({ body: { color: "#e0e0e0", background: "#1a1a2e" } });
-  } else {
-    currentRendition.themes.default({ body: { color: "#1a1a2e", background: "#f5f5f0" } });
-  }
 }
 
 function toggleReaderMode() {
@@ -269,11 +344,11 @@ function initEvents() {
     navigateTo("search");
   });
   $("#reader-mode-toggle").addEventListener("click", toggleReaderMode);
-  $("#prev-page").addEventListener("click", () => { if (currentRendition) currentRendition.prev(); });
-  $("#next-page").addEventListener("click", () => { if (currentRendition) currentRendition.next(); });
+  $("#btn-prev").addEventListener("click", () => { if (currentRendition) currentRendition.prev(); });
+  $("#btn-next").addEventListener("click", () => { if (currentRendition) currentRendition.next(); });
 
   // Navigazione da tastiera nel lettore
-  document.addEventListener("keydown", (e) => {
+  document.addEventListener("keyup", (e) => {
     if (!views.reader.classList.contains("active") || !currentRendition) return;
     if (e.key === "ArrowLeft") currentRendition.prev();
     if (e.key === "ArrowRight") currentRendition.next();
