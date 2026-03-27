@@ -156,6 +156,22 @@ let currentBook = null;
 let currentRendition = null;
 let paginatedMode = true;
 
+function calcolaFontSize() {
+  const w = window.innerWidth;
+  if (w < 380) return "85%";
+  if (w < 480) return "95%";
+  if (w < 768) return "105%";
+  if (w < 1024) return "110%";
+  return "115%";
+}
+
+function calcolaPadding() {
+  const w = window.innerWidth;
+  if (w < 480) return "10px 15px";
+  if (w < 768) return "15px 25px";
+  return "20px 40px";
+}
+
 async function apriLibro(libro) {
   // Quando si riprende, libro è ricostruito da localStorage
   if (typeof libro === "string") {
@@ -193,25 +209,34 @@ async function apriLibro(libro) {
     });
 
     currentRendition = currentBook.renderTo(viewer, {
-      flow: "paginated",
-      spread: "none",
-      minSpreadWidth: 9999
+      manager: "continuous",
+      flow: "scrolled-doc",
+      width: "100%"
     });
 
     currentRendition.themes.register("light", {
       body: {
         background: "#ffffff",
         color: "#000000",
-        margin: "0 auto",
-        "max-width": "700px",
-        padding: "20px 40px",
-        "font-size": "1.1em",
-        "line-height": "1.8",
+        "word-wrap": "break-word",
+        "overflow-wrap": "break-word",
+        "word-break": "normal",
+        "white-space": "normal",
+        "max-width": "100%",
+        "box-sizing": "border-box",
+        padding: calcolaPadding(),
+        margin: "0",
+        "font-size": calcolaFontSize(),
+        "line-height": "1.7",
         "font-family": "Georgia, serif",
         "text-align": "justify"
       },
       "p, h1, h2, h3, span, div": {
-        color: "#000000 !important"
+        color: "#000000 !important",
+        "word-wrap": "break-word",
+        "overflow-wrap": "break-word",
+        "max-width": "100%",
+        "white-space": "normal"
       },
       "hr, .chapter-break": {
         border: "none",
@@ -224,12 +249,14 @@ async function apriLibro(libro) {
         "padding-top": "30px",
         "margin-top": "40px"
       },
-      "p, div, li": {
-        "page-break-inside": "avoid"
+      "p": {
+        "page-break-inside": "avoid",
+        orphans: "3",
+        widows: "3"
       },
-      "h1, h2, h3, h4": {
+      "h1, h2, h3": {
         "page-break-after": "avoid",
-        "page-break-before": "always"
+        "page-break-before": "avoid"
       },
       "table, figure, img": {
         "page-break-inside": "avoid"
@@ -240,17 +267,26 @@ async function apriLibro(libro) {
       body: {
         background: "#000000",
         color: "#ffffff",
-        margin: "0 auto",
-        "max-width": "700px",
-        padding: "20px 40px",
-        "font-size": "1.1em",
-        "line-height": "1.8",
+        "word-wrap": "break-word",
+        "overflow-wrap": "break-word",
+        "word-break": "normal",
+        "white-space": "normal",
+        "max-width": "100%",
+        "box-sizing": "border-box",
+        padding: calcolaPadding(),
+        margin: "0",
+        "font-size": calcolaFontSize(),
+        "line-height": "1.7",
         "font-family": "Georgia, serif",
         "text-align": "justify"
       },
       "p, h1, h2, h3, span, div": {
         color: "#ffffff !important",
-        background: "#000000 !important"
+        background: "#000000 !important",
+        "word-wrap": "break-word",
+        "overflow-wrap": "break-word",
+        "max-width": "100%",
+        "white-space": "normal"
       },
       "hr, .chapter-break": {
         border: "none",
@@ -263,12 +299,14 @@ async function apriLibro(libro) {
         "padding-top": "30px",
         "margin-top": "40px"
       },
-      "p, div, li": {
-        "page-break-inside": "avoid"
+      "p": {
+        "page-break-inside": "avoid",
+        orphans: "3",
+        widows: "3"
       },
-      "h1, h2, h3, h4": {
+      "h1, h2, h3": {
         "page-break-after": "avoid",
-        "page-break-before": "always"
+        "page-break-before": "avoid"
       },
       "table, figure, img": {
         "page-break-inside": "avoid"
@@ -278,6 +316,7 @@ async function apriLibro(libro) {
     currentRendition.themes.select(localStorage.getItem("tema") || "light");
 
     renditionDisplay(libro);
+    attivaFullscreen();
 
   } catch (err) {
     console.error("Errore generale:", err);
@@ -309,6 +348,26 @@ function renditionDisplay(libro) {
 
 }
 
+// ===== FULLSCREEN =====
+function attivaFullscreen() {
+  const el = document.documentElement;
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.mozRequestFullScreen) {
+    el.mozRequestFullScreen();
+  }
+}
+
+function disattivaFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) {
+    document.webkitExitFullscreen();
+  }
+}
+
 function toggleReaderMode() {
   paginatedMode = !paginatedMode;
   if (currentRendition) {
@@ -335,6 +394,7 @@ function initEvents() {
 
   // Lettore
   $("#reader-back").addEventListener("click", () => {
+    disattivaFullscreen();
     if (currentBook) {
       currentBook.destroy();
       currentBook = null;
@@ -343,24 +403,55 @@ function initEvents() {
     navigateTo("search");
   });
   $("#reader-mode-toggle").addEventListener("click", toggleReaderMode);
-  $("#btn-prev").addEventListener("click", () => { if (currentRendition) currentRendition.prev(); });
-  $("#btn-next").addEventListener("click", () => { if (currentRendition) currentRendition.next(); });
+
+  // Navigazione a tap: metà destra → avanti, metà sinistra → indietro
+  const viewer = document.getElementById("epub-viewer");
+  viewer.addEventListener("click", (e) => {
+    const rect = viewer.getBoundingClientRect();
+    const meta = rect.width / 2;
+    if (e.clientX > meta) {
+      viewer.scrollBy({ top: viewer.clientHeight * 0.9, behavior: "smooth" });
+    } else {
+      viewer.scrollBy({ top: -viewer.clientHeight * 0.9, behavior: "smooth" });
+    }
+  });
 
   // Navigazione da tastiera nel lettore
   document.addEventListener("keyup", (e) => {
-    if (!views.reader.classList.contains("active") || !currentRendition) return;
-    if (e.key === "ArrowLeft") currentRendition.prev();
-    if (e.key === "ArrowRight") currentRendition.next();
+    if (!views.reader.classList.contains("active")) return;
+    const v = document.getElementById("epub-viewer");
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      v.scrollBy({ top: v.clientHeight * 0.9, behavior: "smooth" });
+    }
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      v.scrollBy({ top: -v.clientHeight * 0.9, behavior: "smooth" });
+    }
   });
 }
 
 // ===== INIT =====
 document.addEventListener("DOMContentLoaded", async () => {
   initTheme();
+  await caricaCatalogo();
   initSplash();
   initEvents();
   checkRiprendiLettura();
   updateClock();
   setInterval(updateClock, 1000);
-  await caricaCatalogo();
+
+  // Ricalcola font e padding al cambio orientamento
+  window.addEventListener("orientationchange", () => {
+    setTimeout(() => {
+      if (currentRendition) {
+        const viewer = document.getElementById("epub-viewer");
+        currentRendition.themes.default({
+          body: {
+            "font-size": calcolaFontSize(),
+            padding: calcolaPadding()
+          }
+        });
+        currentRendition.resize(viewer.clientWidth, viewer.clientHeight);
+      }
+    }, 300);
+  });
 });
