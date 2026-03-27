@@ -181,6 +181,9 @@ async function apriLibro(libro) {
   }
 
   $("#reader-title").textContent = libro.titolo;
+  // Salva subito titolo e file per la ripresa
+  localStorage.setItem("ultimoLibro", libro.titolo);
+  localStorage.setItem("ultimoFile", libro.file);
   navigateTo("reader");
 
   const viewer = document.getElementById("epub-viewer");
@@ -345,8 +348,20 @@ function initEvents() {
   $("#theme-toggle").addEventListener("click", toggleTheme);
   $("#btn-nuovo").addEventListener("click", () => navigateTo("search"));
   $("#btn-riprendi").addEventListener("click", () => {
-    const libro = localStorage.getItem("ultimoLibro");
-    if (libro) apriLibro(libro);
+    const titolo = localStorage.getItem("ultimoLibro");
+    if (!titolo) return;
+    // Cerca nel catalogo per titolo, fallback su localStorage
+    const libro = catalogo.find(l => l.titolo === titolo);
+    if (libro) {
+      apriLibro(libro);
+    } else {
+      const file = localStorage.getItem("ultimoFile");
+      if (file) {
+        apriLibro({ titolo: titolo, file: file });
+      } else {
+        navigateTo("search");
+      }
+    }
   });
 
   // Ricerca
