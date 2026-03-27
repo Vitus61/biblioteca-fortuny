@@ -153,7 +153,7 @@ let currentBook = null;
 let currentRendition = null;
 let paginatedMode = true;
 
-function apriLibro(libro) {
+async function apriLibro(libro) {
   // Quando si riprende, libro è ricostruito da localStorage
   if (typeof libro === "string") {
     const file = localStorage.getItem("ultimoFile");
@@ -164,44 +164,65 @@ function apriLibro(libro) {
   $("#reader-title").textContent = libro.titolo;
   navigateTo("reader");
 
-  const viewer = $("#epub-viewer");
-  viewer.innerHTML = '<div class="spinner"></div>';
+  const viewer = document.getElementById("epub-viewer");
+  viewer.innerHTML = "<p>Caricamento in corso...</p>";
 
   if (currentBook) {
     currentBook.destroy();
   }
 
+  // Aspetta che la vista sia visibile
+  await new Promise(resolve => setTimeout(resolve, 300));
+
+  viewer.innerHTML = "";
+
   try {
     currentBook = ePub(libro.file);
+
+    currentBook.ready.then(() => {
+      console.log("Book ready:", currentBook.packaging.metadata.title);
+    }).catch(err => {
+      console.error("Book ready error:", err);
+      viewer.innerHTML = "<p>Errore book.ready: " + err + "</p>";
+    });
+
     currentRendition = currentBook.renderTo(viewer, {
-      width: "100%",
-      height: "100%",
-      flow: paginatedMode ? "paginated" : "scrolled-doc"
+      width: viewer.clientWidth,
+      height: viewer.clientHeight,
+      spread: "none"
     });
 
-    // Se stiamo riprendendo questo libro, vai alla posizione salvata
-    const savedBook = localStorage.getItem("ultimoLibro");
-    const savedPos = localStorage.getItem("ultimaPosizione");
-    if (savedBook === libro.titolo && savedPos) {
-      currentRendition.display(savedPos);
-    } else {
-      currentRendition.display();
-    }
+    renditionDisplay(libro);
 
-    // Salva posizione ad ogni cambio pagina
-    currentRendition.on("relocated", (location) => {
-      if (location && location.start && location.start.cfi) {
-        localStorage.setItem("ultimaPosizione", location.start.cfi);
-        localStorage.setItem("ultimoLibro", libro.titolo);
-        localStorage.setItem("ultimoFile", libro.file);
-      }
-    });
-
-    // Applica tema al contenuto epub
-    applyReaderTheme();
   } catch (err) {
-    viewer.innerHTML = `<p class="result-empty">Errore nel caricamento: ${err.message}</p>`;
+    console.error("Errore generale:", err);
+    viewer.innerHTML = "<p>Errore: " + err.message + "</p>";
   }
+}
+
+function renditionDisplay(libro) {
+  // Se stiamo riprendendo questo libro, vai alla posizione salvata
+  const savedBook = localStorage.getItem("ultimoLibro");
+  const savedPos = localStorage.getItem("ultimaPosizione");
+  const cfi = (savedBook === libro.titolo && savedPos) ? savedPos : undefined;
+
+  currentRendition.display(cfi).then(() => {
+    console.log("Displayed successfully");
+  }).catch(err => {
+    console.error("Display error:", err);
+    document.getElementById("epub-viewer").innerHTML = "<p>Errore display: " + err + "</p>";
+  });
+
+  // Salva posizione ad ogni cambio pagina
+  currentRendition.on("relocated", (location) => {
+    if (location && location.start && location.start.cfi) {
+      localStorage.setItem("ultimaPosizione", location.start.cfi);
+      localStorage.setItem("ultimoLibro", libro.titolo);
+      localStorage.setItem("ultimoFile", libro.file);
+    }
+  });
+
+  applyReaderTheme();
 }
 
 function applyReaderTheme() {

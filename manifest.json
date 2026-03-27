@@ -1,0 +1,16 @@
+{
+  "name": "Biblioteca Fortuny-Moretto",
+  "short_name": "Biblioteca",
+  "description": "Biblioteca digitale IIS Fortuny-Moretto",
+  "start_url": "/biblioteca-fortuny/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2c5f8a",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

@@ -291,8 +291,9 @@ body {
 }
 
 #epub-viewer {
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  height: calc(100vh - 120px);
+  overflow: hidden;
 }
 
 .reader-nav {
