@@ -154,7 +154,6 @@ function renderResults(risultati) {
 // ===== 5. LETTORE EPUB =====
 let currentBook = null;
 let currentRendition = null;
-let paginatedMode = true;
 
 function calcolaFontSize() {
   const w = window.innerWidth;
@@ -194,9 +193,6 @@ async function apriLibro(libro) {
   await new Promise(resolve => setTimeout(resolve, 300));
 
   viewer.innerHTML = "";
-
-  const altezzaDisponibile = window.innerHeight - 120;
-  const larghezzaDisponibile = viewer.clientWidth;
 
   try {
     currentBook = ePub(libro.file);
@@ -368,13 +364,6 @@ function disattivaFullscreen() {
   }
 }
 
-function toggleReaderMode() {
-  paginatedMode = !paginatedMode;
-  if (currentRendition) {
-    currentRendition.flow(paginatedMode ? "paginated" : "scrolled-doc");
-  }
-}
-
 // ===== EVENT LISTENERS =====
 function initEvents() {
   // Home
@@ -402,7 +391,7 @@ function initEvents() {
     }
     navigateTo("search");
   });
-  $("#reader-mode-toggle").addEventListener("click", toggleReaderMode);
+
 
   // Navigazione a tap: metà destra → avanti, metà sinistra → indietro
   const viewer = document.getElementById("epub-viewer");
