@@ -288,6 +288,7 @@ body {
 /* ===== 4. LETTORE ===== */
 #reader {
   background: var(--bg-primary);
+  overflow: hidden !important;
 }
 
 #epub-viewer {

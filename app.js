@@ -207,7 +207,8 @@ async function apriLibro(libro) {
     currentRendition = currentBook.renderTo(viewer, {
       manager: "continuous",
       flow: "scrolled-doc",
-      width: "100%"
+      width: "100%",
+      height: "100%"
     });
 
     currentRendition.themes.register("light", {
@@ -246,16 +247,8 @@ async function apriLibro(libro) {
         "margin-top": "40px"
       },
       "p": {
-        "page-break-inside": "avoid",
         orphans: "3",
         widows: "3"
-      },
-      "h1, h2, h3": {
-        "page-break-after": "avoid",
-        "page-break-before": "avoid"
-      },
-      "table, figure, img": {
-        "page-break-inside": "avoid"
       }
     });
 
@@ -296,16 +289,8 @@ async function apriLibro(libro) {
         "margin-top": "40px"
       },
       "p": {
-        "page-break-inside": "avoid",
         orphans: "3",
         widows: "3"
-      },
-      "h1, h2, h3": {
-        "page-break-after": "avoid",
-        "page-break-before": "avoid"
-      },
-      "table, figure, img": {
-        "page-break-inside": "avoid"
       }
     });
 
@@ -329,6 +314,17 @@ function renditionDisplay(libro) {
   }).catch(err => {
     console.error("Display error:", err);
     document.getElementById("epub-viewer").innerHTML = "<p>Errore display: " + err + "</p>";
+  });
+
+  // Navigazione a tap dentro l'iframe epub
+  const epubViewer = document.getElementById("epub-viewer");
+  currentRendition.on("click", (e) => {
+    const w = window.innerWidth;
+    if (e.clientX > w / 2) {
+      epubViewer.scrollBy({ top: epubViewer.clientHeight * 0.9, behavior: "smooth" });
+    } else {
+      epubViewer.scrollBy({ top: -epubViewer.clientHeight * 0.9, behavior: "smooth" });
+    }
   });
 
   // Salva posizione ad ogni cambio pagina
@@ -369,19 +365,6 @@ function initEvents() {
     navigateTo("search");
   });
 
-
-  // Navigazione a tap: metà destra → avanti, metà sinistra → indietro
-  const viewer = document.getElementById("epub-viewer");
-  viewer.addEventListener("click", (e) => {
-    const rect = viewer.getBoundingClientRect();
-    const meta = rect.width / 2;
-    if (e.clientX > meta) {
-      viewer.scrollBy({ top: viewer.clientHeight * 0.9, behavior: "smooth" });
-    } else {
-      viewer.scrollBy({ top: -viewer.clientHeight * 0.9, behavior: "smooth" });
-    }
-  });
-
   // Navigazione da tastiera nel lettore
   document.addEventListener("keyup", (e) => {
     if (!views.reader.classList.contains("active")) return;
@@ -410,12 +393,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     setTimeout(() => {
       if (currentRendition) {
         const viewer = document.getElementById("epub-viewer");
-        currentRendition.themes.default({
-          body: {
-            "font-size": calcolaFontSize(),
-            padding: calcolaPadding()
-          }
-        });
+        currentRendition.themes.override("font-size", calcolaFontSize());
+        currentRendition.themes.override("padding", calcolaPadding());
         currentRendition.resize(viewer.clientWidth, viewer.clientHeight);
       }
     }, 300);
