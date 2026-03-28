@@ -167,6 +167,30 @@
       "genere": "Narrativa",
       "anno": 1878,
       "file": "epub/tolstoj_anna_karenina.epub"
+    },
+    {
+      "id": 22,
+      "titolo": "Quattro chiacchiere con Francesco Guccini",
+      "autore": "Federica Pegorin Steccherino",
+      "genere": "Saggistica",
+      "anno": 2012,
+      "file": "epub/quattro-chiacchiere-con-Francesco-Guccini.epub"
+    },
+    {
+      "id": 23,
+      "titolo": "Il menù dell'amore",
+      "autore": "Aa.Vv",
+      "genere": "Narrativa",
+      "anno": 2012,
+      "file": "epub/il-menu-dell-amore.epub"
+    },
+    {
+      "id": 24,
+      "titolo": "L'uomo medievale",
+      "autore": "Jacques Le Goff",
+      "genere": "Storia",
+      "anno": 2014,
+      "file": "epub/l-uomo-medievale.epub"
     }
   ]
 }

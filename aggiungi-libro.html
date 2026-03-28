@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aggiungi libro — Biblioteca Fortuny</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background: #fff;
+      color: #222;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      line-height: 1.6;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: .3rem;
+    }
+    .subtitle {
+      color: #666;
+      margin-bottom: 2rem;
+      font-size: .95rem;
+    }
+
+    /* Pulsante apri catalogo */
+    .open-section {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .open-section p {
+      margin-bottom: .8rem;
+      font-size: .95rem;
+    }
+    .btn {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1rem;
+      padding: .6rem 1.4rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-primary {
+      background: #1a1a2e;
+      color: #fff;
+    }
+    .btn-primary:hover { background: #2a2a4e; }
+    .btn-primary:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+    .btn-open {
+      background: #2c6e49;
+      color: #fff;
+    }
+    .btn-open:hover { background: #3a8a5e; }
+
+    .badge {
+      display: inline-block;
+      background: #1a1a2e;
+      color: #fff;
+      padding: .2rem .7rem;
+      border-radius: 12px;
+      font-size: .85rem;
+      margin-top: .5rem;
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    label {
+      font-weight: bold;
+      font-size: .95rem;
+      display: block;
+      margin-bottom: .3rem;
+    }
+    input, select {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 1rem;
+      width: 100%;
+      padding: .55rem .7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1a1a2e;
+    }
+    .nota-campo {
+      font-size: .8rem;
+      color: #888;
+      margin-top: .2rem;
+    }
+
+    /* Messaggi */
+    .msg {
+      padding: .8rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      display: none;
+      font-size: .95rem;
+    }
+    .msg-ok {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+    .msg-err {
+      background: #fce4ec;
+      color: #c62828;
+      border: 1px solid #ef9a9a;
+    }
+
+    /* Lista libri */
+    .lista-section {
+      margin-top: 2.5rem;
+      border-top: 1px solid #ddd;
+      padding-top: 1.5rem;
+    }
+    .lista-section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+    .lista-libri {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    .lista-libri li {
+      padding: .5rem .7rem;
+      background: #fafafa;
+      border-radius: 4px;
+      font-size: .9rem;
+      border-left: 3px solid #1a1a2e;
+    }
+    .lista-libri .id-label {
+      color: #999;
+      font-size: .8rem;
+    }
+    .lista-libri .titolo { font-style: italic; }
+    .lista-libri .autore { color: #555; }
+
+    /* Footer */
+    .footer-nota {
+      margin-top: 2.5rem;
+      padding: 1rem;
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 6px;
+      font-size: .85rem;
+      color: #6d4c00;
+      text-align: center;
+    }
+
+    fieldset {
+      border: none;
+    }
+    fieldset:disabled {
+      opacity: .45;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Aggiungi libro al catalogo</h1>
+  <p class="subtitle">Strumento per aggiornare catalogo.json senza modificarlo a mano</p>
+
+  <!-- Apri catalogo -->
+  <div class="open-section">
+    <p>Per iniziare, apri il file <strong>catalogo.json</strong> del progetto</p>
+    <button class="btn btn-open" id="btn-apri">Apri catalogo.json</button>
+    <div id="info-catalogo"></div>
+  </div>
+
+  <!-- Messaggi -->
+  <div class="msg msg-ok" id="msg-ok"></div>
+  <div class="msg msg-err" id="msg-err"></div>
+
+  <!-- Form -->
+  <fieldset id="fieldset-form" disabled>
+    <form id="form-libro">
+      <div>
+        <label for="titolo">Titolo</label>
+        <input type="text" id="titolo" required>
+      </div>
+      <div>
+        <label for="autore">Autore</label>
+        <input type="text" id="autore" required>
+      </div>
+      <div>
+        <label for="genere">Genere</label>
+        <select id="genere" required>
+          <option value="">— seleziona —</option>
+          <option value="Narrativa">Narrativa</option>
+          <option value="Poesia">Poesia</option>
+          <option value="Teatro">Teatro</option>
+          <option value="Storia">Storia</option>
+          <option value="Saggistica">Saggistica</option>
+        </select>
+      </div>
+      <div>
+        <label for="anno">Anno</label>
+        <input type="number" id="anno" required min="0" max="2100">
+      </div>
+      <div>
+        <label for="file-epub">Nome file epub</label>
+        <input type="text" id="file-epub" required placeholder="es: pg65736-images.epub">
+        <p class="nota-campo">Il file deve essere già presente nella cartella /epub/</p>
+      </div>
+      <button type="submit" class="btn btn-primary" id="btn-aggiungi">Aggiungi al catalogo</button>
+    </form>
+  </fieldset>
+
+  <!-- Lista libri -->
+  <div class="lista-section" id="lista-section" style="display:none">
+    <h2>Libri nel catalogo (<span id="conta-libri">0</span>)</h2>
+    <ul class="lista-libri" id="lista-libri"></ul>
+  </div>
+
+  <!-- Nota git -->
+  <p class="footer-nota">
+    Dopo aver aggiunto i libri ricordati di fare <strong>git add</strong>, <strong>commit</strong> e <strong>push</strong>
+  </p>
+
+  <script>
+    let catalogo = null;
+
+    const btnApri = document.getElementById('btn-apri');
+    const infoCatalogo = document.getElementById('info-catalogo');
+    const fieldsetForm = document.getElementById('fieldset-form');
+    const formLibro = document.getElementById('form-libro');
+    const msgOk = document.getElementById('msg-ok');
+    const msgErr = document.getElementById('msg-err');
+    const listaSection = document.getElementById('lista-section');
+    const listaLibri = document.getElementById('lista-libri');
+    const contaLibri = document.getElementById('conta-libri');
+
+    function mostraMsg(tipo, testo) {
+      msgOk.style.display = 'none';
+      msgErr.style.display = 'none';
+      const el = tipo === 'ok' ? msgOk : msgErr;
+      el.textContent = testo;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 5000);
+    }
+
+    function aggiornaLista() {
+      if (!catalogo) return;
+      const libri = catalogo.libri;
+      contaLibri.textContent = libri.length;
+      listaLibri.innerHTML = '';
+      libri.forEach(l => {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="id-label">#${l.id}</span> <span class="titolo">${l.titolo}</span> — <span class="autore">${l.autore}</span>`;
+        listaLibri.appendChild(li);
+      });
+      listaSection.style.display = 'block';
+    }
+
+    async function caricaCatalogo() {
+      const [fileHandle] = await window.showOpenFilePicker({
+        types: [{
+          description: 'JSON',
+          accept: { 'application/json': ['.json'] }
+        }]
+      });
+      window.catalogoHandle = fileHandle;
+      const file = await fileHandle.getFile();
+      const testo = await file.text();
+      return JSON.parse(testo);
+    }
+
+    async function salvaCatalogo(cat) {
+      const writable = await window.catalogoHandle.createWritable();
+      await writable.write(JSON.stringify(cat, null, 2) + '\n');
+      await writable.close();
+    }
+
+    btnApri.addEventListener('click', async () => {
+      try {
+        catalogo = await caricaCatalogo();
+        const n = catalogo.libri.length;
+        infoCatalogo.innerHTML = `<span class="badge">${n} libri presenti</span>`;
+        fieldsetForm.disabled = false;
+        btnApri.textContent = 'Catalogo aperto';
+        btnApri.disabled = true;
+        aggiornaLista();
+      } catch (e) {
+        if (e.name !== 'AbortError') {
+          mostraMsg('err', 'Errore nell\'apertura del file: ' + e.message);
+        }
+      }
+    });
+
+    formLibro.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const titolo = document.getElementById('titolo').value.trim();
+      const autore = document.getElementById('autore').value.trim();
+      const genere = document.getElementById('genere').value;
+      const anno = parseInt(document.getElementById('anno').value, 10);
+      const fileEpub = document.getElementById('file-epub').value.trim();
+
+      if (!titolo || !autore || !genere || isNaN(anno) || !fileEpub) {
+        mostraMsg('err', 'Compila tutti i campi');
+        return;
+      }
+
+      const maxId = catalogo.libri.reduce((max, l) => Math.max(max, l.id), 0);
+      const nuovoLibro = {
+        id: maxId + 1,
+        titolo,
+        autore,
+        genere,
+        anno,
+        file: 'epub/' + fileEpub
+      };
+
+      catalogo.libri.push(nuovoLibro);
+
+      try {
+        await salvaCatalogo(catalogo);
+        mostraMsg('ok', `"${titolo}" aggiunto al catalogo (id: ${nuovoLibro.id})`);
+        formLibro.reset();
+        aggiornaLista();
+      } catch (err) {
+        catalogo.libri.pop();
+        mostraMsg('err', 'Errore nel salvataggio: ' + err.message);
+      }
+    });
+  </script>
+
+</body>
+</html>
